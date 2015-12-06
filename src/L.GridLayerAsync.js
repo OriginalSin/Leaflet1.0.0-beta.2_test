@@ -5,34 +5,25 @@ var ExtendMethods = {
         var _this = this;
 
         setTimeout(function () {
-            var skipKeys = {
+            var skipKeys = {        // For some reason we don't want create tile.el for those grid cells
                 '77:39:7': true,
                 '154:79:8': true
             };
             var tkey = _this._tileCoordsToKey(tilePoint),
-                tile = _this._tiles[tkey];
-// tile.loaded = true;
-// console.log('canvas', tkey, tile);
-            if (tile && !skipKeys[tkey]) {
-                if (!tile.el) {
-                    tile.el = document.createElement('canvas');
-                }
-                var canvas = tile.el;
-                _this._levels[tilePoint.z].el.appendChild(canvas);
-
-                _this._initTile(canvas);
-                L.DomUtil.addClass(canvas, 'leaflet-tile-loaded');
-                var tilePos = _this._getTilePos(tilePoint);
-                L.DomUtil.setPosition(canvas, tilePos);
-                
-                var ctx = canvas.getContext('2d');
+                tile = _this._tiles[tkey],
+                skip = skipKeys[tkey] || !tile;
+            if (!skip) {
+                console.log('draw tile');
+                _this._initTile(tilePoint);
+                var canvas = tile.el,
+                    ctx = canvas.getContext('2d');
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
                 ctx.rect(0, 0, 255, 255);
                 ctx.strokeText(tkey, 50, 50);
                 ctx.stroke();
             }
             callback();
-        }, 10);
+        }, 700);
     }
 };
 
@@ -42,6 +33,9 @@ L.GridLayerAsync = L.GridLayer.extend({
     includes: ExtendMethods,
     initialize: function(options) {
         L.GridLayer.prototype.initialize.call(this, null, options);
+        this.on('load', function(ev) {
+            console.log('all done levels:', Object.keys(this._levels).length, 'tiles:', Object.keys(this._tiles).length);
+        });
     },
     
     createTile: function(coords, done){
@@ -49,14 +43,45 @@ L.GridLayerAsync = L.GridLayer.extend({
         return null;
     },
 
+    _initTile: function (coords) {
+        var tkey = this._tileCoordsToKey(coords),
+            cell = this._tiles[tkey];
+
+        if (!cell.el) {
+            cell.el = L.DomUtil.create('canvas',
+                'leaflet-tile',
+                this._levels[coords.z].el
+            );
+        }
+
+        var cellNode = cell.el,
+            tileSize = this.getTileSize(),
+            tilePos = this._getTilePos(coords);
+
+        cellNode.width = tileSize.x;
+        cellNode.height = tileSize.y;
+        L.DomUtil.setPosition(cellNode, tilePos);
+
+        // update opacity on tiles in IE7-8 because of filter inheritance problems
+        if (L.Browser.ielt9 && this.options.opacity < 1) {
+            L.DomUtil.setOpacity(cellNode, this.options.opacity);
+        }
+
+        // without this hack, tiles disappear after zoom on Chrome for Android
+        // https://github.com/Leaflet/Leaflet/issues/2078
+        if (L.Browser.android && !L.Browser.android23) {
+            cellNode.style.WebkitBackfaceVisibility = 'hidden';
+        }
+    },
+
     _addTile: function (coords, container) {
         this.createTile(this._wrapCoords(coords), L.bind(this._tileReady, this, coords));
         // if createTile is defined with a second argument ("done" callback),
         // we know that tile is async and will be ready later; otherwise
-        if (this.createTile.length < 2) {
+        // if (this.createTile.length < 2) {
             // mark tile as ready, but delay one frame for opacity animation to happen
-            L.Util.requestAnimFrame(L.bind(this._tileReady, this, coords));
-        }
+            // L.Util.requestAnimFrame(L.bind(this._tileReady, this, coords));
+        // }
 
         var key = this._tileCoordsToKey(coords);
         this._tiles[key] = {
@@ -111,7 +136,6 @@ if (tile.el) { L.DomUtil.setOpacity(tile.el, fade); }
 
     _removeTile: function (key) {
         var tile = this._tiles[key];
-        // console.log('_removeTile', key, tile);
         if (!tile) { return; }
 if (tile.el) L.DomUtil.remove(tile.el);
 
