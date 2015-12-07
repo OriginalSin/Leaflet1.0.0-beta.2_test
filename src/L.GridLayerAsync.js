@@ -11,7 +11,7 @@ var ExtendMethods = {
             };
             var tkey = _this._tileCoordsToKey(tilePoint),
                 tile = _this._tiles[tkey],
-                skip = skipKeys[tkey] || !tile;
+                skip = skipKeys[tkey] || !tile || _this._tileZoom !== tilePoint.z;
             if (!skip) {
                 console.log('draw tile');
                 _this._initTile(tilePoint);
@@ -34,8 +34,26 @@ L.GridLayerAsync = L.GridLayer.extend({
     initialize: function(options) {
         L.GridLayer.prototype.initialize.call(this, null, options);
         this.on('load', function(ev) {
+            var len = Object.keys(this._levels).length,
+                arr = [],
+                count = 0;
+            if (len > 1) {
+                for (var zoom in this._levels) {
+                    var it = this._levels[zoom];
+                    if (it.el.childElementCount) {
+                        count++;
+                        arr.push(it.el.childElementCount);
+                        if (count > 1) {
+                            console.log('Error not prune tiles:', arr, this._levels);
+                            // this._pruneTiles();
+                            break;
+                        }
+                    }
+                }
+            }
             console.log('all done levels:', Object.keys(this._levels).length, 'tiles:', Object.keys(this._tiles).length);
-        });
+            
+        }, this);
     },
     
     createTile: function(coords, done){
