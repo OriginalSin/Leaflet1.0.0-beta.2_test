@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test L.GridLayer from Leaflet 1.0.0-beta.2 (954e83d). http://leafletjs.com</title>
+
+    <link rel="stylesheet" href="../external/leaflet.css" />
+
+    <script src="../external/leaflet-src.js"></script>
+
+    <script src="../src/L.GridLayerTest.js"></script>
+    
+    <style>
+        html, body, #map {
+            height: 100%;
+            margin: 0px;
+        }
+    </style>    
+</head>
+
+<body>
+    <div id="map"></div>
+
+    <script type="text/javascript">
+
+        var map = L.map('map').setView([55.7, 38], 7);
+
+        var testLayer = L.gridLayerTest({
+            attribution: 'Test L.GridLayer'
+        }).addTo(map);
+
+    </script>
+</body>
+</html>
