@@ -1,7 +1,10 @@
 ﻿var arrTest = [],
+    drawNow = false,
     doDraw = function() {
         arrTest.map(function(it) { it(); });
         arrTest = [];
+        drawNow = true;
+        map.setZoom(8);
     };
 
 (function() {
@@ -66,8 +69,8 @@ L.GridLayerTest = L.GridLayer.extend({
                 // '77:39:7': true,
                 // '154:79:8': true
             };
-            var skip = skipKeys[tkey];
-            if (!skip) {
+            // var skip = skipKeys[tkey];
+            // if (!skip) {
                 console.log('draw tile');
                 var canvas = tile,
                     ctx = canvas.getContext('2d');
@@ -75,10 +78,10 @@ L.GridLayerTest = L.GridLayer.extend({
                 ctx.rect(0, 0, 255, 255);
                 ctx.strokeText(tkey, 50, 50);
                 ctx.stroke();
-            }
+            // }
             // done();
         // }, 750);
-arrTest.push(done);
+drawNow ? done() : arrTest.push(done);
         return tile;
     },
 
