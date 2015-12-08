@@ -1,5 +1,10 @@
-﻿(function() {
+﻿var arrTest = [],
+    doDraw = function() {
+        arrTest.map(function(it) { it(); });
+        arrTest = [];
+    };
 
+(function() {
 L.GridLayerTest = L.GridLayer.extend({
     options: {
     },
@@ -13,10 +18,15 @@ L.GridLayerTest = L.GridLayer.extend({
                 for (var zoom in this._levels) {
                     var it = this._levels[zoom];
                     if (it.el.childElementCount) {
-                        count++;
-                        arr.push(it.el.childElementCount);
+                        for (var i= 0, len = it.el.childNodes.length; i < len; i++) {
+                            var node = it.el.childNodes[i];
+                            if (node.style.opacity < 1) {
+                                count++;
+                                break;
+                            }
+                        }
                         if (count > 1) {
-                            console.log('Error not prune tiles:', arr, this._levels);
+                            console.log('Error not prune tiles:', this._map._animatingZoom, arr, this._levels);
                             // this._pruneTiles();
                             break;
                         }
@@ -51,10 +61,10 @@ L.GridLayerTest = L.GridLayer.extend({
         tile.alt = '';
 
         // tile.src = this.getTileUrl(coords);
-        setTimeout(function () {
+        // setTimeout(function () {
             var skipKeys = {        // For some reason we don't want create tile.el for those grid cells
-                '77:39:7': true,
-                '154:79:8': true
+                // '77:39:7': true,
+                // '154:79:8': true
             };
             var skip = skipKeys[tkey];
             if (!skip) {
@@ -66,9 +76,9 @@ L.GridLayerTest = L.GridLayer.extend({
                 ctx.strokeText(tkey, 50, 50);
                 ctx.stroke();
             }
-            done();
-        }, 700);
-
+            // done();
+        // }, 750);
+arrTest.push(done);
         return tile;
     },
 

@@ -14,11 +14,19 @@
             height: 100%;
             margin: 0px;
         }
+        button {
+            cursor: point;
+            z-index: 1000;
+            position: absolute;
+            top: 11px;
+            left: 50px;
+        }
     </style>    
 </head>
 
 <body>
     <div id="map"></div>
+    <button onclick='doDraw()'> Run done for all tiles</button>
 
     <script type="text/javascript">
 
@@ -27,7 +35,7 @@
         var testLayer = L.gridLayerTest({
             attribution: 'Test L.GridLayer'
         }).addTo(map);
-
+doDraw
     </script>
 </body>
 </html>
