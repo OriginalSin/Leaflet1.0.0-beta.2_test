@@ -36,7 +36,7 @@ L.GridLayerTest = L.GridLayer.extend({
                     }
                 }
             }
-            console.log('all done levels:', Object.keys(this._levels).length, 'tiles:', Object.keys(this._tiles).length);
+            // console.log('all done levels:', Object.keys(this._levels).length, 'tiles:', Object.keys(this._tiles).length);
             
         }, this);
     },
@@ -62,26 +62,14 @@ L.GridLayerTest = L.GridLayer.extend({
          http://www.w3.org/TR/WCAG20-TECHS/H67
         */
         tile.alt = '';
-
-        // tile.src = this.getTileUrl(coords);
-        // setTimeout(function () {
-            var skipKeys = {        // For some reason we don't want create tile.el for those grid cells
-                // '77:39:7': true,
-                // '154:79:8': true
-            };
-            // var skip = skipKeys[tkey];
-            // if (!skip) {
-                console.log('draw tile');
-                var canvas = tile,
-                    ctx = canvas.getContext('2d');
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                ctx.rect(0, 0, 255, 255);
-                ctx.strokeText(tkey, 50, 50);
-                ctx.stroke();
-            // }
-            // done();
-        // }, 750);
-drawNow ? done() : arrTest.push(done);
+// console.log('draw tile');
+        var canvas = tile,
+            ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.rect(0, 0, 255, 255);
+        ctx.strokeText(tkey, 50, 50);
+        ctx.stroke();
+        drawNow ? done() : arrTest.push(done);
         return tile;
     },
 
