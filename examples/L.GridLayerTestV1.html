@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test L.GridLayer from Leaflet 1.0.0-beta.2 (954e83d). http://leafletjs.com</title>
+
+    <link rel="stylesheet" href="../external/leaflet.css" />
+
+    <script src="../external/leaflet-src.js"></script>
+
+    <style>
+        html, body, #map {
+            height: 100%;
+            margin: 0px;
+        }
+        button {
+            cursor: point;
+            z-index: 1000;
+            position: absolute;
+            top: 11px;
+            left: 50px;
+        }
+    </style>    
+</head>
+
+<body>
+    <div id="map"></div>
+	<button onclick='map.setZoom(8);'> setZoom to 8</button>
+
+    <script type="text/javascript">
+
+        var map = L.map('map').setView([55.7, 38], 7);
+
+		var CanvasLayer = L.GridLayer.extend({
+			createTile: function(coords, done){
+				var error;
+				// create a <canvas> element for drawing
+				var tile = L.DomUtil.create('canvas', 'leaflet-tile');
+
+				// setup tile width and height according to the options
+				var size = this.getTileSize();
+				tile.width = size.x;
+				tile.height = size.y;
+
+				var tkey = this._tileCoordsToKey(coords);
+				// draw something asynchronously and pass the tile to the done() callback
+				setTimeout(function() {
+					var ctx = tile.getContext('2d');
+					ctx.clearRect(0, 0, tile.width, tile.height);
+					ctx.rect(0, 0, 255, 255);
+					ctx.strokeText(tkey, 50, 50);
+					ctx.stroke();
+					done(error, tile);
+				}, 0);
+
+				return tile;
+			}
+		});
+
+		var testLayer = new CanvasLayer({
+            attribution: 'Test L.GridLayer'
+        }).addTo(map);
+
+    </script>
+</body>
+</html>
