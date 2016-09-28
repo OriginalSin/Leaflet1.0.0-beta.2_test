@@ -1,6 +1,7 @@
-# Leaflet1.0.0-beta.2_test
-Test Leaflet 1.0.0-beta.2
+# Leaflet1.0.0-test
+Test Leaflet 1.0.0
 
 Bug demo
 ------
-  * [Check async drawing tiles](http://originalsin.github.io/Leaflet1.0.0-beta.2_test/examples/L.GridLayerTest.html) - on click button we want map.setZoom(8) from 7 - and resolve all async tiles in one tick 
+  * [Check async drawing tiles](http://originalsin.github.io/Leaflet1.0.0-test/examples/L.GridLayerTestV1.html) - try active ZoomOut ZoomIn for tiles from old Zoom
+  * [Check async drawing tiles](http://originalsin.github.io/Leaflet1.0.0-test/examples/L.GridLayerTest.html) - on click button we want map.setZoom(8) from 7 - and resolve all async tiles in one tick 
